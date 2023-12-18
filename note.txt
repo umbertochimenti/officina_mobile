@@ -1,0 +1,2 @@
+per installare mlrose bisogna settare la variabile:
+export SKLEARN_ALLOW_DEPRECATED_SKLEARN_PACKAGE_INSTALL=True
