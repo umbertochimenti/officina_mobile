@@ -15,7 +15,6 @@ def remove_dicts_with_value(input_list, key_to_check, value_to_remove):
 def extract_dict_by_key_value(input_list, key_to_check, value_to_find):
     for item in input_list:
         if item.get(key_to_check) == value_to_find:
-            # print(item)
             return item
     return None
 
@@ -47,17 +46,11 @@ if __name__ == "__main__":
         time_in_addresses = []
         punti = []
         punti_from_officina = []
-        # punti_from_officina_single_intervento_for_day = []
-        # points_distance_single_intervento_for_day = []
         error_line = st.error("")
         error_line.empty()
         info_line = st.info("")
         info_line.empty()
         load_err_num = 0
-
-        locations = []
-        officina = {"id":"OFFICINA", "coords": {"lat": 40.64038085651474, "lng": 14.847294381362609}}
-        locations.append(officina)
         id_point = 0
 
         for i, row in input_df_used.iterrows():
@@ -132,7 +125,6 @@ if __name__ == "__main__":
         # st.table(points_to_evaluate)
         
         day = 0
-        NUM_H_IN_A_DD = daily_time_slot
         officina_points = [point for point in points_to_evaluate if point['A'] == "OFFICINA"]
         # st.info(officina_points)
         
@@ -173,6 +165,8 @@ if __name__ == "__main__":
             day_points.append(point_max_dist_from_officina)
 
             total_time_with_return_to_officina = total_time + point_max_dist_from_officina['time_B_A']
+            h_total_p, m_total_p = divmod(int((total_time_with_return_to_officina) * 60), 60)
+            st.success("Con il rientro in officina sarei fuori da " + str(h_total_p) + " h e " + str(m_total_p) + " min!")
             if total_time_with_return_to_officina > max_daily_time_slot:
                 h_travel, m_travel = divmod(int((point_max_dist_from_officina['time_B_A']) * 60), 60)
                 h_total, m_total = divmod(int((total_time_with_return_to_officina) * 60), 60)
@@ -181,8 +175,8 @@ if __name__ == "__main__":
                 total_time = total_time_with_return_to_officina
             else:
                 while total_time <= max_daily_time_slot:
-                    # ora parte il check che verifica se sommando il tempo di ritorno in officina sforo il tempo
-                    # totale di lavoro quotidiano
+                    # ora parte il check che verifica se sommando il tempo di ritorno 
+                    # in officina sforo il tempo totale di lavoro quotidiano
                     # prendo il punto che minimizza la distanza rispetto al punto attuale
                     # sarà il punto in cui effettuerò il prossimo lavoro
                     points_linked_to_A = [point for point in points_to_evaluate if point['A'] == day_points[-1]['B'] and point not in daily_point_yet_examinate]
@@ -216,7 +210,7 @@ if __name__ == "__main__":
                                 # st.error("Il tempo è eccessivo. Valuto un'alternativa!")
                                 daily_point_yet_examinate.append(point_B_min_dist)
                             else:
-                                st.info("svolgo l'intervento in: " + str(point_B_min_dist['B']))
+                                st.info("intervento di " + str(point_B_min_dist['work_time_B']) + " ore in: " + str(point_B_min_dist['B']))
                                 points_to_evaluate.remove(point_B_min_dist)
                                 day_points.append(point_B_min_dist)
 
@@ -244,146 +238,11 @@ if __name__ == "__main__":
                                 total_time += point_B_min_dist['work_time_B']
                                 h_total, m_total = divmod(int((total_time) * 60), 60)
                                 st.success("Finora ho lavorato " + str(h_total) + " h e " + str(m_total) + " min!")
+                                tot_time_with_return_in_officina = total_time + point_B_min_dist_from_officina['time_B_A'] 
+                                h_total_p, m_total_p = divmod(int((tot_time_with_return_in_officina) * 60), 60)
+                                st.success("Con il rientro in officina sarei fuori da " + str(h_total_p) + " h e " + str(m_total_p) + " min!")
                         else:
                             points_to_evaluate.remove(point_B_min_dist)
                             break
                     else:
                         break
-                        
-
-        #     
-        #     print("*****")
-        #     print(max_dist_from_officina)
-        #     key_to_check = 'to'
-        #     value_to_remove = max_dist_from_officina['to']
-        #     points_distances = remove_dicts_with_value(points_distances, key_to_check, value_to_remove)
-        #     punti_from_officina = remove_dicts_with_value(punti_from_officina, key_to_check, value_to_remove)
-        #     print("value_to_remove from officina: " + str(value_to_remove))
-        #     punto_attuale_from_officina_time_to_reach = max_dist_from_officina['time_to_reach']
-
-            
-
-        #     time_in_a_day = 0.0
-        #     time_in_a_day += max_dist_from_officina['time_to_reach']
-        #     print_text = "Dall'officina a " + str(max_dist_from_officina['to'] + " impiego " + str(time_in_a_day) + " ore!")
-        #     st.info("Dall'officina a " + str(max_dist_from_officina['to']))
-        #     time_in_a_day += max_dist_from_officina['work_time_to']
-        #     print_text = "In " + str(max_dist_from_officina['to'] + " resto per " + str(time_in_a_day) + " ore!")
-        #     # st.info(print_text)
-
-        #     while time_in_a_day <= NUM_H_IN_A_DD:
-        #         can_go_list = []
-        #         if (len(points_distances) > 0):
-        #             for i, point in enumerate(points_distances):
-        #                 if max_dist_from_officina['to'] == point['from']:
-        #                     print("posso andare a: " +str(point['to']))
-        #                     can_go_list.append(point)
-        #             next_location = min(can_go_list, key=lambda x: x['time_to_reach'])
-        #             next_location_alternatives = []
-        #             while len(can_go_list) > 0:
-        #                 next_location_alternative = min(can_go_list, key=lambda x: x['time_to_reach'] + x['work_time_to'] )
-        #                 next_location_alternatives.append(next_location_alternative)
-        #                 if next_location_alternative in can_go_list:
-        #                     can_go_list.remove(next_location_alternative)
-                    
-        #             time_in_a_day += next_location['time_to_reach']
-        #             time_in_a_day += next_location['work_time_to']
-        #             max_dist_from_officina = next_location
-        #             print_text = "Per andare in " + str(next_location['to']) + " impiego " + str(next_location['time_to_reach']) + " ore!"
-        #             print(print_text)
-        #             st.info("Da " + str(next_location['from']) + " Vado in " + str(next_location['to']))
-        #             print_text = "in " + str(next_location['to'] + " resto per " + str(next_location['work_time_to']) + " ore!")
-        #             print(print_text)
-        #             # st.info(print_text)
-
-        #             punto_from_officina = extract_dict_by_key_value(punti_from_officina, 'to', next_location['to'])
-        #             punti_from_officina_alternativi = []
-        #             for next_location_alternative in next_location_alternatives:
-        #                 punto_from_officina_alternativo = extract_dict_by_key_value(punti_from_officina, 'to', next_location_alternative['to'])
-        #                 punti_from_officina_alternativi.append(punto_from_officina_alternativo)
-
-        #             punto_attuale_from_officina = extract_dict_by_key_value(punti_from_officina, 'to', next_location['from'])
-        #             print("PUNTO FROM OFFICINA")
-        #             print(punto_from_officina)
-        #             print("PUNTO ATTUALE FROM OFFICINA:  next_location['from']: " + str(next_location['from']))
-        #             print(punto_attuale_from_officina)
-        #             time_from_current_point_to_officina = punto_from_officina['time_to_reach']
-
-        #             if (time_in_a_day+time_from_current_point_to_officina > (NUM_H_IN_A_DD + NUM_H_IN_A_DD*(percentage_of_time_overrun/100))):
-        #                 danger_text = "DANGER: se faccio questo lavoro torno a casa dopo " + str(time_in_a_day+time_from_current_point_to_officina) + " ore!"
-        #                 print(danger_text)
-        #                 # st.text(danger_text)
-        #                 danger_text = "DANGER: dato che supera l'orario di lavoro del 15% rientro a casa!"
-        #                 print(danger_text)
-        #                 # st.text(danger_text)
-        #                 hours, minutes = divmod(int((time_in_a_day+time_from_current_point_to_officina) * 60), 60)
-        #                 st.error("ATTENTO: se fai l'intervento in " + str(next_location['to']) + " torneresti a casa dopo " + str(hours) + " ore e " + str(minutes) + " minuti! Questo sfora del "+str(percentage_of_time_overrun)+"% l'orario giornaliero!")
-        #                 total_time_for_day = time_in_a_day-next_location['time_to_reach']-next_location['work_time_to']
-        #                 # total_time_for_day -= punto_attuale_from_officina['time_to_reach']
-        #                 total_time_for_day -= punto_attuale_from_officina_time_to_reach
-        #                 hours, minutes = divmod(int((total_time_for_day) * 60), 60)
-        #                 st.warning("Quindi, lo farai in un altro momento!")
-        #                 print("Quindi, lo farai in un altro momento, così torni a casa dopo " + str(hours) + " ore e " + str(minutes) + " minuti!")
-                        
-        #                 # ritorno al punto precedente in termini di tempo e valuto un'alternativa
-        #                 while len(next_location_alternatives) > 0:
-        #                     total_alternative = time_in_a_day - next_location['time_to_reach']
-        #                     total_alternative -= next_location['work_time_to']
-        #                     t1 = next_location_alternatives[0]['time_to_reach']
-        #                     t2 = next_location_alternatives[0]['work_time_to']
-        #                     total_alternative = total_alternative + t1 + t2 + punti_from_officina_alternativi[0]['time_to_reach']
-        #                     if total_alternative < (NUM_H_IN_A_DD + NUM_H_IN_A_DD*(percentage_of_time_overrun/100)):
-        #                         hours, minutes = divmod(int(total_alternative * 60), 60)
-        #                         st.info("ALTERNATIVA: Vado in " + str(next_location_alternatives[0]['to'] + " e torno a casa dopo: " + str(hours)) + " ore e " + str(minutes) + " minuti. Questo non sfora del "+str(percentage_of_time_overrun)+"% l'orario giornaliero!")
-        #                         print("Vado in " + str(next_location_alternatives[0]['to']) + " e torno a casa dopo: " + str(hours) + " ore e " + str(minutes) + " minuti. Questo non sfora del "+str(percentage_of_time_overrun)+"% l'orario giornaliero!")
-        #                         time_in_a_day = total_alternative
-        #                         next_location = next_location_alternatives[0]
-        #                         max_dist_from_officina = next_location
-        #                         # st.success(next_location)
-        #                         points_distances = remove_dicts_with_value(points_distances, 'to', next_location_alternatives[0]['to'])
-        #                         break
-        #                     else:
-        #                         st.info("Non ci sono alternative sul percorso per oggi! Torna in officina!")
-        #                         # st.info("Da " + str(next_location['from']) + " ritorno in officina!")
-        #                         break
-        #                     next_location_alternatives.pop(0)
-        #                     punti_from_officina_alternativi.pop(0)
-        #             else:
-        #                 key_to_check = 'to'
-        #                 value_to_remove = max_dist_from_officina['to']
-        #                 points_distances = remove_dicts_with_value(points_distances, key_to_check, value_to_remove)
-                        
-        #                 if time_in_a_day + time_from_current_point_to_officina <= NUM_H_IN_A_DD:
-        #                     hours, minutes = divmod(int(time_in_a_day * 60), 60)
-        #                     print_text = "finora ho lavorato " + str(hours) + " ore e " + str(minutes) + " minuti!"
-        #                     # st.info(print_text)
-        #                     time_if_return =time_in_a_day+time_from_current_point_to_officina
-        #                     print_text = "se rientro impiego in totale " + str(time_if_return) + " ore"
-        #                     # st.success(print_text)
-        #                     print_text = "dato che sono sotto " + str(NUM_H_IN_A_DD) + " ore, continuo a lavorare"
-        #                     # st.success(print_text)
-        #                 else:
-        #                     time_in_a_day += time_from_current_point_to_officina
-        #                     hours, minutes = divmod(int(time_in_a_day * 60), 60)
-        #                     print_text = "rientro a casa dopo aver lavorato: " + str(hours) + " ore e " + str(minutes) + " minuti!"
-        #                     print(print_text)
-        #                     st.info(print_text)
-        #         else:
-        #             print("hai esaurito i punti da raggiungere")
-        #             hours, minutes = divmod(int(time_in_a_day * 60), 60)
-        #             print_text = "Finora ho lavorato " + str(hours) + " ore e " + str(minutes) + " minuti!"
-        #             st.info(print_text)
-        #             st.warning("INFO: hai completato tutte le attività in lista, rientra a casa!")
-        #             break
-        #         # print(next_location)
-        #         print("ore giornaliere: " + str(time_in_a_day))
-        #     else:
-        #         print("Hai raggiunto già le ore giornaliere!")
-        
-        # for punti in punti_from_officina_single_intervento_for_day:
-        #     day += 1
-        #     st.header("Giorno " + str(day) + ": singola attività che sfora l'orario giornaliero")
-        #     st.info("vai a " + str(punti['to']))
-
-
-

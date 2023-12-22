@@ -313,4 +313,3 @@ if __name__ == "__main__":
         #     st.info("vai a " + str(punti['to']))
 
 
-
