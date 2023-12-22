@@ -4,8 +4,8 @@ import requests
 import json
 from datetime import datetime, timezone
 
-app_id = "dd2a6475"
-api_key = "bc39c684f9235cce13804cb6f117727a"
+app_id = "xxxxxxxx"
+api_key = "xyzxyzxyzxyzxyzxyzxyzxyzxyz"
 
 car_workshop_coords = (40.64038085651474, 14.847294381362609)
 
