@@ -33,6 +33,7 @@ if __name__ == "__main__":
     percentage_of_time_overrun = st.number_input("Inserisci la % massima di sforamento sull'orario giornaliero", min_value=0, max_value=30, value=15, step=1)
     max_daily_time_slot = (daily_time_slot + daily_time_slot*(percentage_of_time_overrun/100))
     uploaded_file = st.file_uploader("Seleziona il file .csv di partenza (Verifica che gli indirizzi inseriti siano corretti)", type=["csv"])
+    print("")
 
     if uploaded_file is not None:    
         geoloc.init_geolocalize()
